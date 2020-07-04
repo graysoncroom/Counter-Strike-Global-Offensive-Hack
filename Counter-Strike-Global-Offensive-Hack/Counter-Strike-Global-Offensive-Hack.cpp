@@ -1,6 +1,13 @@
 #include <windows.h>
+#include <string>
 
-LRESULT CALLBACK windowProcedure(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
+void AddMenus(HWND);
+void OnSize(HWND, UINT, int, int);
+
+HMENU hMenu;
+
+LPCWSTR menuTabNames[] = { L"File", L"Edit", L"View", L"Project", L"Build", L"Debug", L"Test" };
 
 /*
  hInstance - base address of the instance of our application
@@ -21,17 +28,17 @@ int WINAPI wWinMain(HINSTANCE hInstance,
     wc.hCursor = LoadCursor(NULL, IDC_CROSS);
     wc.hInstance = hInstance;
     wc.lpszClassName = L"myWindowClass";
-    wc.lpfnWndProc = &windowProcedure;
+    wc.lpfnWndProc = &WindowProcedure;
 
     if (!RegisterClass(&wc)) {
         return -1;
     }
 
-    CreateWindow(L"myWindowClass", 
-                 L"Hack for \"Counter-Strike: Global Offensive\"",
-                 WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-                 100, 100, 500, 500,
-                 NULL, NULL, NULL, NULL);
+    CreateWindow(L"myWindowClass",
+        L"Hack for \"Counter-Strike: Global Offensive\"",
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+        100, 100, 500, 500,
+        NULL, NULL, NULL, NULL);
 
     MSG message = { 0 };
 
@@ -45,15 +52,37 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 
 /*
  hWindow - window handle
- message -
- wp -
- lp -
+ message - ex: The WM_SIZE message indicates the window was resized
+ wp - contains additional data that pertains to the message
+ lp - also contains additional data that pertains to the message
 */
-LRESULT CALLBACK windowProcedure(HWND hWindow, 
+LRESULT CALLBACK WindowProcedure(HWND hWindow, 
                                  UINT message, 
                                  WPARAM wp, 
                                  LPARAM lp) {
     switch (message) {
+    case WM_COMMAND:
+        for (int i = 0, n = sizeof(menuTabNames) / sizeof(menuTabNames[0]); i < n; i++) {
+            // using wstring to concatenate our two LPCWSTRs
+            std::wstring tabName(menuTabNames[i]);
+            tabName += L" has been clicked!";
+
+            if (wp == i + 1) {
+                MessageBox(hWindow, tabName.c_str(), L"Notification Window", MB_OK);
+            }
+        }
+        break;
+    case WM_CREATE:
+        AddMenus(hWindow);
+        break;
+    case WM_SIZE:
+        {
+            int width = LOWORD(lp);
+            int height = HIWORD(lp);
+        
+            OnSize(hWindow, (UINT)wp, width, height);
+        }
+        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -62,4 +91,18 @@ LRESULT CALLBACK windowProcedure(HWND hWindow,
     }
 
     return NULL;
+}
+
+void AddMenus(HWND hWindow) {
+    hMenu = CreateMenu();
+
+    for (int i = 0, n = sizeof(menuTabNames) / sizeof(menuTabNames[0]); i < n; i++) {
+        AppendMenu(hMenu, MF_STRING, i + 1, menuTabNames[i]);
+    }
+
+    SetMenu(hWindow, hMenu);
+}
+
+void OnSize(HWND hWindow, UINT flag, int width, int height) {
+    // Handle resizing
 }
