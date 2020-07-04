@@ -67,6 +67,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWindow,
             std::wstring tabName(menuTabNames[i]);
             tabName += L" has been clicked!";
 
+            // wParameter (i.e. wp) is the newItemID when the message is WM_COMMAND
             if (wp == i + 1) {
                 MessageBox(hWindow, tabName.c_str(), L"Notification Window", MB_OK);
             }
@@ -79,7 +80,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWindow,
         {
             int width = LOWORD(lp);
             int height = HIWORD(lp);
-        
+
             OnSize(hWindow, (UINT)wp, width, height);
         }
         break;
@@ -97,7 +98,7 @@ void AddMenus(HWND hWindow) {
     hMenu = CreateMenu();
 
     for (int i = 0, n = sizeof(menuTabNames) / sizeof(menuTabNames[0]); i < n; i++) {
-        AppendMenu(hMenu, MF_STRING, i + 1, menuTabNames[i]);
+        AppendMenuW(hMenu, MF_STRING, i + 1, menuTabNames[i]);
     }
 
     SetMenu(hWindow, hMenu);
