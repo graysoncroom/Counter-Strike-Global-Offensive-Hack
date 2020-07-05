@@ -30,10 +30,12 @@ bool MemoryManager::Attach(const std::string& strProcessName) {
         CloseHandle(hSnapshot);
         return false;
     }
+
+    return false;
 }
 
 bool MemoryManager::GrabModule(const std::string& strModuleName) {
-    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, m_dwProcessId);
+    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, this->m_dwProcessId);
 
     if (hSnapshot == INVALID_HANDLE_VALUE) return false;
 
@@ -55,6 +57,8 @@ bool MemoryManager::GrabModule(const std::string& strModuleName) {
         CloseHandle(hSnapshot);
         return false;
     }
+
+    return false;
 }
 
 MemoryManager::MemoryManager(const std::string& strProcessName = "csgo.exe") : m_hProcess(INVALID_HANDLE_VALUE), m_dwProcessId(0) {
