@@ -22,7 +22,7 @@ int WINAPI wWinMain(HINSTANCE hInstance,
                     HINSTANCE hPrevInstance,
                     PWSTR pCmdLine,
                     int nCmdShow) {
-    WNDCLASSW wc = { 0 };
+    WNDCLASS wc = { 0 };
 
     wc.hbrBackground = (HBRUSH) COLOR_WINDOW;
     wc.hCursor = LoadCursor(NULL, IDC_CROSS);
